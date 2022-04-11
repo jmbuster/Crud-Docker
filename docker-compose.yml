@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+    php-apache-environment:
+        container_name: Page-docker
+        build:
+            context: ./php
+            dockerfile: Dockerfile
+        depends_on:
+            - db
+        volumes:
+            - ./php/page:/var/www/html/
+        ports:
+            - 8000:80
+    db:
+        container_name: database
+        image: mysql
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: burgos
+            MYSQL_DATABASE: school
+            MYSQL_USER: burgos
+            MYSQL_PASSWORD: root
+        ports:
+          - 3306:3306
+        volumes:
+          - ./base:/docker-entrypoint-initdb.d
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - '8080:80'
+        restart: always
+        environment:
+            PMA_HOST: db
+        depends_on:
+            - db
